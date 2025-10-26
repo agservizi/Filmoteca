@@ -53,7 +53,10 @@ if ($genreFilter && !isset($_GET['genre'])) {
 
 if (isset($_GET['page']) && $page > 1) {
     $canonicalPagePath = build_route_path($genreSlug ? '/genere/' . $genreSlug : '/', $page);
-    header('Location: ' . $canonicalPagePath, true, 301);
+    $redirectTarget = $canonicalPagePath === '/'
+        ? app_path('')
+        : app_path(ltrim($canonicalPagePath, '/'));
+    header('Location: ' . $redirectTarget, true, 301);
     exit;
 }
 
@@ -186,7 +189,8 @@ function build_page_url(int $page, array $params, string $basePath): string
     }
     $path = build_route_path($basePath, $page);
     $params = array_filter($params, static fn($value) => $value !== null && $value !== '');
-    return $params ? $path . '?' . http_build_query($params) : $path;
+    $resolvedPath = $path === '/' ? app_path('') : app_path(ltrim($path, '/'));
+    return $params ? $resolvedPath . '?' . http_build_query($params) : $resolvedPath;
 }
 
 function build_route_path(string $basePath, int $page): string
