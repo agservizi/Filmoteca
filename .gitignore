@@ -1,0 +1,15 @@
+.env
+/vendor/
+/node_modules/
+.DS_Store
+cache/*
+!cache/.gitkeep
+cache/tmdb/*
+!cache/tmdb/.gitkeep
+cache/api/*
+!cache/api/.gitkeep
+assets/posters/*
+!assets/posters/
+!assets/posters/.gitkeep
+!assets/posters/cache/
+!assets/posters/cache/.gitkeep
