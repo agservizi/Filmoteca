@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib/seo.php';
+require_once __DIR__ . '/lib/url.php';
 
 /** @var array $meta */
 $meta = $meta ?? seo_default_meta();
@@ -20,19 +21,19 @@ $structuredDataScripts = $structuredDataScripts ?? [];
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css" as="style">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css" integrity="sha384-srJXuJ4E26lzz1poLHZtyd2h/bQc3rGfj/SBIZb2mIfAuwRWLofJQpuAJkAo8VUF" crossorigin="anonymous">
-    <link rel="preload" href="/assets/css/styles.css" as="style">
-    <link rel="stylesheet" href="/assets/css/styles.css" media="all">
+    <link rel="preload" href="<?= htmlspecialchars(asset_url('css/styles.css'), ENT_QUOTES, 'UTF-8'); ?>" as="style">
+    <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('css/styles.css'), ENT_QUOTES, 'UTF-8'); ?>" media="all">
     <?= seo_render_meta($meta); ?>
     <?php foreach ($structuredDataScripts as $jsonLd): ?>
         <?= $jsonLd; ?>
     <?php endforeach; ?>
-    <link rel="icon" type="image/svg+xml" href="/assets/images/icon.svg">
-    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" type="image/svg+xml" href="<?= htmlspecialchars(asset_url('images/icon.svg'), ENT_QUOTES, 'UTF-8'); ?>">
+    <link rel="manifest" href="<?= htmlspecialchars(app_path('manifest.webmanifest'), ENT_QUOTES, 'UTF-8'); ?>">
 </head>
-<body data-app-env="<?= htmlspecialchars(env('APP_ENV', 'development'), ENT_QUOTES, 'UTF-8'); ?>">
+<body data-app-env="<?= htmlspecialchars(env('APP_ENV', 'development'), ENT_QUOTES, 'UTF-8'); ?>" data-base-path="<?= htmlspecialchars(app_base_path(), ENT_QUOTES, 'UTF-8'); ?>" data-absolute-base="<?= htmlspecialchars(rtrim(app_url('', true), '/'), ENT_QUOTES, 'UTF-8'); ?>">
 <nav class="navbar is-fixed-top" role="navigation" aria-label="Main navigation">
     <div class="navbar-brand">
-        <a class="navbar-item" href="/">
+        <a class="navbar-item" href="<?= htmlspecialchars(app_path(''), ENT_QUOTES, 'UTF-8'); ?>">
             <span class="logo" aria-hidden="true">🎬</span>
             <span class="logo-text">Filmoteca Pro</span>
         </a>
@@ -44,10 +45,10 @@ $structuredDataScripts = $structuredDataScripts ?? [];
     </div>
     <div id="navMenu" class="navbar-menu">
         <div class="navbar-start">
-            <a class="navbar-item" href="/">Home</a>
-            <a class="navbar-item" href="/page/1">Catalogo</a>
-            <a class="navbar-item" href="/genere/science-fiction">Fantascienza</a>
-            <a class="navbar-item" href="/genere/drama">Drama</a>
+            <a class="navbar-item" href="<?= htmlspecialchars(app_path(''), ENT_QUOTES, 'UTF-8'); ?>">Home</a>
+            <a class="navbar-item" href="<?= htmlspecialchars(app_path('page/1'), ENT_QUOTES, 'UTF-8'); ?>">Catalogo</a>
+            <a class="navbar-item" href="<?= htmlspecialchars(app_path('genere/science-fiction'), ENT_QUOTES, 'UTF-8'); ?>">Fantascienza</a>
+            <a class="navbar-item" href="<?= htmlspecialchars(app_path('genere/drama'), ENT_QUOTES, 'UTF-8'); ?>">Drama</a>
         </div>
         <div class="navbar-end">
             <div class="navbar-item">

@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/env.php';
 require_once __DIR__ . '/tmdb.php';
+require_once __DIR__ . '/url.php';
 
 function seo_default_meta(array $overrides = []): array
 {
-    $appUrl = rtrim((string) env('APP_URL', 'http://localhost'), '/');
-
     $defaults = [
         'title' => 'Filmoteca Pro — Catalogo film SEO-first',
         'description' => 'Filmoteca Pro unisce catalogo film, trailer e community con integrazione TMDb e ottimizzazioni SEO.',
         'robots' => 'index,follow',
-        'url' => $appUrl . '/',
-        'canonical' => $appUrl . '/',
-        'image' => $appUrl . '/assets/images/icon.svg',
+        'url' => app_url('', true),
+        'canonical' => app_url('', true),
+        'image' => asset_url('images/icon.svg', true),
         'type' => 'website',
         'site_name' => 'Filmoteca Pro',
         'twitter_card' => 'summary_large_image',
@@ -55,12 +54,8 @@ function seo_render_meta(array $meta): string
 
 function seo_build_canonical(string $path): string
 {
-    $appUrl = rtrim((string) env('APP_URL', 'http://localhost'), '/');
-    $normalised = $path === '' ? '/' : $path;
-    if ($normalised !== '/' && !str_starts_with($normalised, '/')) {
-        $normalised = '/' . $normalised;
-    }
-    return $appUrl . $normalised;
+    $normalised = $path === '' ? '' : ltrim($path, '/');
+    return app_url($normalised, true);
 }
 
 function seo_json_ld(array $payload): string
@@ -70,18 +65,18 @@ function seo_json_ld(array $payload): string
 
 function seo_build_home_jsonld(): array
 {
-    $appUrl = rtrim((string) env('APP_URL', 'http://localhost'), '/');
+    $homeUrl = rtrim(app_url('', true), '/');
 
     return [
         '@context' => 'https://schema.org',
         '@type' => 'WebSite',
-        '@id' => $appUrl . '/#website',
-        'url' => $appUrl . '/',
+        '@id' => $homeUrl . '/#website',
+        'url' => $homeUrl . '/',
         'name' => 'Filmoteca Pro',
         'description' => 'Catalogo film SEO-first con watchlist, trailer, recensioni e integrazione TMDb.',
         'potentialAction' => [
             '@type' => 'SearchAction',
-            'target' => $appUrl . '/?search={search_term_string}',
+            'target' => $homeUrl . '/?search={search_term_string}',
             'query-input' => 'required name=search_term_string',
         ],
         'publisher' => [
@@ -89,7 +84,7 @@ function seo_build_home_jsonld(): array
             'name' => 'Filmoteca Pro',
             'logo' => [
                 '@type' => 'ImageObject',
-                'url' => $appUrl . '/assets/images/icon.svg',
+                'url' => asset_url('images/icon.svg', true),
             ],
             'sameAs' => [
                 'https://www.themoviedb.org/',
@@ -100,8 +95,7 @@ function seo_build_home_jsonld(): array
 
 function seo_build_movie_jsonld(array $movie, array $videos = []): array
 {
-    $appUrl = rtrim((string) env('APP_URL', 'http://localhost'), '/');
-    $canonical = $appUrl . '/film/' . $movie['id'] . '/' . $movie['slug'];
+    $canonical = app_url('film/' . $movie['id'] . '/' . $movie['slug'], true);
     $duration = isset($movie['duration']) ? 'PT' . (int) $movie['duration'] . 'M' : null;
 
     $data = [
@@ -111,7 +105,7 @@ function seo_build_movie_jsonld(array $movie, array $videos = []): array
         'url' => $canonical,
         'name' => $movie['title'],
         'description' => $movie['summary'] ?? '',
-        'image' => $movie['poster']['url'] ?? tmdb_build_poster_url($movie['poster_path_remote'] ?? null, 'w780'),
+    'image' => $movie['poster']['url'] ?? tmdb_build_poster_url($movie['poster_path_remote'] ?? null, 'w780'),
         'genre' => $movie['genre'] ?? null,
         'datePublished' => isset($movie['year']) ? sprintf('%d-01-01', (int) $movie['year']) : null,
         'duration' => $duration,

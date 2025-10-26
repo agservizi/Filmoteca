@@ -6,6 +6,7 @@ require_once __DIR__ . '/../lib/env.php';
 require_once __DIR__ . '/../lib/http.php';
 require_once __DIR__ . '/../lib/tmdb.php';
 require_once __DIR__ . '/../lib/cache.php';
+require_once __DIR__ . '/../lib/url.php';
 $ip = $_SERVER['REMOTE_ADDR'] ?? 'anonymous';
 $rateLimitKey = 'movies:' . $ip;
 $now = time();
@@ -33,9 +34,7 @@ $bucket['count']++;
 cache_set('api', $rateLimitKey, $bucket, (int) max(1, $bucket['reset'] - $now));
 require_once __DIR__ . '/../movies.php';
 
-$appUrl = env('APP_URL', 'http://localhost');
-$parsedApp = parse_url((string) $appUrl);
-$originHost = $parsedApp ? ($parsedApp['scheme'] . '://' . $parsedApp['host'] . (isset($parsedApp['port']) ? ':' . $parsedApp['port'] : '')) : null;
+$originHost = app_host_url();
 $allowedOrigins = $originHost ? [$originHost] : [];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? null;
 if ($origin && http_origin_allowed($origin, $allowedOrigins)) {
@@ -56,7 +55,7 @@ $includeTmdb = filter_var($_GET['tmdb'] ?? 'false', FILTER_VALIDATE_BOOLEAN);
 
 $result = movies_paginated($filters, $page, $perPage);
 $movies = array_map(static function ($movie) use ($includeTmdb) {
-    $appUrl = rtrim((string) env('APP_URL', 'http://localhost'), '/');
+    $baseUrl = rtrim(app_url('', true), '/');
     return [
         'id' => (int) $movie['id'],
         'tmdb_id' => $movie['tmdb_id'] ?? null,
@@ -79,7 +78,7 @@ $movies = array_map(static function ($movie) use ($includeTmdb) {
             'ratingCount' => $movie['rating_count'],
         ] : null,
         'links' => [
-            'self' => $appUrl . '/film/' . $movie['id'] . '/' . $movie['slug'],
+            'self' => $baseUrl . '/film/' . $movie['id'] . '/' . $movie['slug'],
         ],
         'tmdb' => ($includeTmdb && !empty($movie['tmdb_id'])) ? [
             'id' => (int) $movie['tmdb_id'],
@@ -89,16 +88,16 @@ $movies = array_map(static function ($movie) use ($includeTmdb) {
     ];
 }, $result['data']);
 
-$appUrl = rtrim((string) env('APP_URL', 'http://localhost'), '/');
+$apiBase = rtrim(app_url('api/movies.php', true), '/movies.php');
 
 $query = $_GET;
 $query['page'] = $page;
-$self = $appUrl . '/api/movies.php?' . http_build_query($query);
+$self = $apiBase . '/movies.php?' . http_build_query($query);
 
 $links = [
     'self' => $self,
-    'prev' => $page > 1 ? $appUrl . '/api/movies.php?' . http_build_query(array_merge($query, ['page' => $page - 1])) : null,
-    'next' => $page < $result['meta']['total_pages'] ? $appUrl . '/api/movies.php?' . http_build_query(array_merge($query, ['page' => $page + 1])) : null,
+    'prev' => $page > 1 ? $apiBase . '/movies.php?' . http_build_query(array_merge($query, ['page' => $page - 1])) : null,
+    'next' => $page < $result['meta']['total_pages'] ? $apiBase . '/movies.php?' . http_build_query(array_merge($query, ['page' => $page + 1])) : null,
 ];
 
 if ($links['prev'] || $links['next']) {

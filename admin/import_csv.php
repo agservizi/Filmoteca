@@ -3,6 +3,7 @@ require_once __DIR__ . '/../lib/auth.php';
 require_once __DIR__ . '/../movies.php';
 require_once __DIR__ . '/../lib/seo.php';
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/url.php';
 
 auth_start_session();
 auth_require();
@@ -121,7 +122,7 @@ $csrfToken = csrf_token('admin_import');
 </head>
 <body class="section">
 <div class="container" style="max-width: 720px;">
-    <a class="button is-text" href="/admin/dashboard.php">← Torna alla dashboard</a>
+    <a class="button is-text" href="<?= htmlspecialchars(app_path('admin/dashboard.php'), ENT_QUOTES, 'UTF-8'); ?>">← Torna alla dashboard</a>
 
     <h1 class="title">Importazione CSV</h1>
     <p class="subtitle">Carica un CSV con le colonne standard Filmoteca.</p>

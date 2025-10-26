@@ -6,9 +6,9 @@ require_once __DIR__ . '/../lib/auth.php';
 auth_start_session();
 
 if (auth_check()) {
-    header('Location: /admin/dashboard.php');
+    header('Location: ' . app_path('admin/dashboard.php'));
     exit;
 }
 
-header('Location: /admin/login.php');
+header('Location: ' . app_path('admin/login.php'));
 exit;

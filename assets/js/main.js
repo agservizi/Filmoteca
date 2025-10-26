@@ -1,5 +1,16 @@
+const config = window.appConfig ?? {};
+const basePath = typeof config.basePath === 'string' ? config.basePath : '';
+const absoluteBase = typeof config.absoluteBase === 'string' ? config.absoluteBase : '';
+
+const resolvePath = (relativePath = '/') => {
+  const normalized = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
+  if (absoluteBase) {
+    return `${absoluteBase}${normalized}`;
+  }
+  return `${basePath}${normalized}`;
+};
+
 const themeToggle = document.getElementById('theme-toggle');
-const root = document.documentElement;
 const storedTheme = localStorage.getItem('filmoteca-theme');
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -51,7 +62,7 @@ const renderMovies = (payload) => {
     column.className = 'column is-one-quarter-desktop is-one-third-tablet is-half-mobile';
     column.innerHTML = `
       <article class="movie-card" data-movie-id="${escapeHtml(movie.id)}">
-        <a class="movie-card__link" href="/film/${escapeHtml(movie.id)}/${escapeHtml(movie.slug)}">
+  <a class="movie-card__link" href="${resolvePath(`/film/${escapeHtml(movie.id)}/${escapeHtml(movie.slug)}`)}">
           <figure class="movie-card__poster">
             ${movie.poster?.url ? `<img src="${escapeHtml(movie.poster.url)}" alt="Poster di ${escapeHtml(movie.title)}" loading="lazy" decoding="async">` : '<div class="movie-card__poster-placeholder" role="img" aria-label="Poster non disponibile"></div>'}
           </figure>
@@ -81,7 +92,7 @@ const fetchMovies = (term = '') => {
   if (term) {
     params.set('search', term);
   }
-  const requestUrl = `/api/movies.php?${params.toString()}`;
+  const requestUrl = `${resolvePath('/api/movies.php')}?${params.toString()}`;
   fetch(requestUrl, {
     headers: {
       Accept: 'application/json'

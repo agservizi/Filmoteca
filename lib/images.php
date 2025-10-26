@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/env.php';
+require_once __DIR__ . '/url.php';
 
 function images_supports_webp(): bool
 {
@@ -138,7 +139,6 @@ function images_save_variants(string $binary, string $targetBasePath, array $siz
 
 function images_generate_srcset(string $relativeBase, array $variants): array
 {
-    $appUrl = rtrim((string) env('APP_URL', 'http://localhost'), '/');
     $docRoot = rtrim((string) ($_SERVER['DOCUMENT_ROOT'] ?? dirname(__DIR__, 2)), DIRECTORY_SEPARATOR);
     $docRootNormalized = str_replace('\\', '/', $docRoot);
     $srcset = [];
@@ -147,7 +147,7 @@ function images_generate_srcset(string $relativeBase, array $variants): array
         $relative = ltrim(str_replace($docRootNormalized, '', $normalized), '/');
         $srcset[] = [
             'size' => $alias,
-            'url' => $appUrl . '/' . ltrim($relative, '/')
+            'url' => app_url($relative, true)
         ];
     }
     return $srcset;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/lib/env.php';
+require_once __DIR__ . '/lib/url.php';
 ?>
 </main>
 <footer class="footer">
@@ -21,9 +21,10 @@ require_once __DIR__ . '/lib/env.php';
 </footer>
 <script>
     window.appConfig = {
-        baseUrl: '<?= htmlspecialchars(rtrim((string) env('APP_URL', 'http://localhost'), '/'), ENT_QUOTES, 'UTF-8'); ?>'
+        basePath: '<?= htmlspecialchars(app_base_path(), ENT_QUOTES, 'UTF-8'); ?>',
+        absoluteBase: '<?= htmlspecialchars(rtrim(app_url('', true), '/'), ENT_QUOTES, 'UTF-8'); ?>'
     };
 </script>
-<script src="/assets/js/main.js" type="module" defer></script>
+<script src="<?= htmlspecialchars(asset_url('js/main.js'), ENT_QUOTES, 'UTF-8'); ?>" type="module" defer></script>
 </body>
 </html>

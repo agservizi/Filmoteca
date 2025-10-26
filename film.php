@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib/env.php';
 require_once __DIR__ . '/lib/seo.php';
+require_once __DIR__ . '/lib/url.php';
 require_once __DIR__ . '/lib/tmdb.php';
 require_once __DIR__ . '/movies.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '';
+$basePrefix = app_base_path();
+if ($basePrefix !== '' && str_starts_with($uri, $basePrefix)) {
+    $uri = substr($uri, strlen($basePrefix)) ?: '';
+}
 if (!preg_match('#^/film/(\d+)/(.*)$#', $uri, $segments)) {
     http_response_code(404);
     echo 'Pagina non trovata';

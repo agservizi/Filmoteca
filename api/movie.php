@@ -6,6 +6,7 @@ require_once __DIR__ . '/../lib/env.php';
 require_once __DIR__ . '/../lib/http.php';
 require_once __DIR__ . '/../lib/tmdb.php';
 require_once __DIR__ . '/../lib/seo.php';
+require_once __DIR__ . '/../lib/url.php';
 require_once __DIR__ . '/../movies.php';
 
 header('Content-Type: application/json; charset=utf-8');
@@ -62,9 +63,9 @@ $response = [
         'poster_path_remote' => $movie['poster_path_remote'] ?? null,
         'poster_cached_at' => $movie['poster_cached_at'] ?? null,
         'links' => [
-            'html' => seo_build_canonical('/film/' . $movie['id'] . '/' . $movie['slug']),
+            'html' => app_url('film/' . $movie['id'] . '/' . $movie['slug']),
         ],
-    'jsonld' => seo_build_movie_jsonld($movie, $videoEmbeds),
+        'jsonld' => seo_build_movie_jsonld($movie, $videoEmbeds),
         'tmdb' => $tmdbPayload,
     ],
 ];

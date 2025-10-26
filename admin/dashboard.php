@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../lib/auth.php';
 require_once __DIR__ . '/../movies.php';
 require_once __DIR__ . '/../lib/seo.php';
+require_once __DIR__ . '/../lib/url.php';
 
 auth_start_session();
 auth_require();
@@ -37,7 +38,7 @@ $recentMovies = movies_recent(5);
             </div>
         </div>
         <div class="level-right">
-            <a class="button is-light" href="/admin/logout.php">Esci</a>
+            <a class="button is-light" href="<?= htmlspecialchars(app_path('admin/logout.php'), ENT_QUOTES, 'UTF-8'); ?>">Esci</a>
         </div>
     </div>
 
@@ -77,7 +78,7 @@ $recentMovies = movies_recent(5);
                     <?php foreach ($recentMovies as $movie): ?>
                         <tr>
                             <td>
-                                <a href="/film/<?= htmlspecialchars($movie['id'], ENT_QUOTES, 'UTF-8'); ?>/<?= htmlspecialchars($movie['slug'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                                <a href="<?= htmlspecialchars(app_path('film/' . $movie['id'] . '/' . $movie['slug']), ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
                                     <?= htmlspecialchars($movie['title'], ENT_QUOTES, 'UTF-8'); ?>
                                 </a>
                             </td>
@@ -92,8 +93,8 @@ $recentMovies = movies_recent(5);
             <div class="box">
                 <h2 class="title is-5">Azioni rapide</h2>
                 <div class="buttons">
-                    <a class="button is-primary" href="/admin/import_csv.php">Importa CSV</a>
-                    <a class="button is-link" href="/admin/upload_poster.php">Carica poster</a>
+                    <a class="button is-primary" href="<?= htmlspecialchars(app_path('admin/import_csv.php'), ENT_QUOTES, 'UTF-8'); ?>">Importa CSV</a>
+                    <a class="button is-link" href="<?= htmlspecialchars(app_path('admin/upload_poster.php'), ENT_QUOTES, 'UTF-8'); ?>">Carica poster</a>
                     <span class="button is-warning is-light" title="Esegui da terminale: php scripts/cli/tmdb_sync.php">Sync TMDb (CLI)</span>
                 </div>
                 <p class="is-size-7 has-text-grey">

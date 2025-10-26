@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/lib/env.php';
 require_once __DIR__ . '/lib/db.php';
 require_once __DIR__ . '/lib/tmdb.php';
+require_once __DIR__ . '/lib/url.php';
 
 const MOVIES_DEFAULT_PER_PAGE = 12;
 
@@ -302,7 +303,6 @@ function movies_hydrate(array $movie): array
 
 function movies_build_poster_payload(array $movie): array
 {
-    $appUrl = rtrim((string) env('APP_URL', 'http://localhost'), '/');
     $useRemote = filter_var(env('TMDB_USE_REMOTE_IMAGES', 'true'), FILTER_VALIDATE_BOOLEAN);
 
     $posterLocal = $movie['poster_path_local'] ?? null;
@@ -310,7 +310,7 @@ function movies_build_poster_payload(array $movie): array
 
     $url = null;
     if ($posterLocal) {
-        $url = $appUrl . '/' . ltrim($posterLocal, '/');
+    $url = app_url($posterLocal, true);
     } elseif ($useRemote && $posterRemote) {
         $url = tmdb_build_poster_url($posterRemote, 'w500');
     }
@@ -321,7 +321,7 @@ function movies_build_poster_payload(array $movie): array
         $localVariant = $posterLocal ? preg_replace('#(\.[^.]+)$#', sprintf('.%s$1', $size), $posterLocal) : null;
         $src = null;
         if ($localVariant && file_exists(dirname(__DIR__) . '/' . $localVariant)) {
-            $src = $appUrl . '/' . ltrim($localVariant, '/');
+            $src = app_url($localVariant, true);
         } elseif ($posterRemote) {
             $src = tmdb_build_poster_url($posterRemote, $size);
         }

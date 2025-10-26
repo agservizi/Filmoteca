@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/env.php';
 require_once __DIR__ . '/cache.php';
+require_once __DIR__ . '/url.php';
 
 const AUTH_SESSION_KEY = 'filmoteca_admin';
 const AUTH_CSRF_NAMESPACE = 'csrf_admin';
@@ -76,7 +77,7 @@ function auth_check(): bool
 function auth_require(): void
 {
     if (!auth_check()) {
-        header('Location: /admin/login.php');
+        header('Location: ' . app_path('admin/login.php'));
         exit;
     }
 }

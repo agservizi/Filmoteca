@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib/env.php';
 require_once __DIR__ . '/lib/seo.php';
+require_once __DIR__ . '/lib/url.php';
 require_once __DIR__ . '/movies.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+$basePrefix = app_base_path();
+if ($basePrefix !== '' && str_starts_with($uri, $basePrefix)) {
+    $uri = substr($uri, strlen($basePrefix)) ?: '/';
+}
 $uri = rtrim($uri, '/') ?: '/';
 
 if (preg_match('#^/film/(\d+)/(.*)$#', $uri, $matches)) {
@@ -26,7 +31,7 @@ $genreFilter = $_GET['genre'] ?? null;
 $genreSlug = null;
 
 if ($uri === '/page') {
-    header('Location: /', true, 301);
+    header('Location: ' . app_path(''), true, 301);
     exit;
 }
 
@@ -101,7 +106,7 @@ include __DIR__ . '/header.php';
             <p class="subtitle is-uppercase is-size-6 has-text-weight-semibold">Catalogo ultra moderno</p>
             <h1 class="title is-1">Filmoteca Pro</h1>
             <p class="subtitle is-4">Il tuo hub SEO-first per scoprire, salvare e condividere i film che ami.</p>
-            <form id="search-form" class="box search-box" method="get" action="/" role="search">
+            <form id="search-form" class="box search-box" method="get" action="<?= htmlspecialchars(app_path(''), ENT_QUOTES, 'UTF-8'); ?>" role="search">
                 <div class="field has-addons">
                     <div class="control is-expanded">
                         <label class="is-sr-only" for="search">Cerca film</label>
